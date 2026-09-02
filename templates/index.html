@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4A3E9F',
+                        secondary: '#2D65C2',
+                        accent: '#7E57C2'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #F8F9FA; }
+        
+        .sidebar-gradient {
+            background: linear-gradient(180deg, #4F46E5 0%, #2563EB 100%);
+        }
+        
+        .btn-gradient {
+            background: linear-gradient(90deg, #6366F1 0%, #8B5CF6 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-gradient:hover {
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .input-card {
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+            border-bottom-left-radius: 16px;
+            border-bottom-right-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .custom-input {
+            border: 1px solid #E5E7EB;
+            border-radius: 8px;
+            padding: 10px 14px;
+            width: 100%;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .custom-input:focus {
+            border-color: #6366F1;
+            box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.1);
+        }
+
+        /* Sidebar active link */
+        .sidebar-active {
+            background-color: white;
+            color: #4A3E9F !important;
+            font-weight: 700;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-link {
+            transition: background 0.2s;
+            color: #E0E7FF;
+        }
+        .sidebar-link:hover:not(.sidebar-active) {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        
+        /* Fade in animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade {
+            animation: fadeIn 0.4s ease forwards;
+        }
+    </style>
+</head>
+<body class="flex h-screen overflow-hidden font-sans text-gray-800">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar-gradient w-[260px] h-full flex flex-col text-white flex-shrink-0 z-20">
+        <!-- Brand -->
+        <div class="p-6 flex items-center gap-3">
+            <div class="bg-white text-primary w-10 h-10 rounded-lg flex items-center justify-center text-xl shadow-lg">
+                🏠
+            </div>
+            <div>
+                <h1 class="text-lg font-bold leading-tight tracking-wide">House Price<br>Prediction</h1>
+                <p class="text-[10px] text-blue-200 mt-1 uppercase tracking-wider font-semibold">ML Web Application</p>
+            </div>
+        </div>
+
+        <!-- Menu -->
+        <div class="px-4 mt-4">
+            <p class="text-xs text-blue-200 uppercase tracking-widest font-semibold mb-4 px-2">Main Menu</p>
+            <nav class="flex flex-col gap-1.5" id="sidebar-nav">
+                <a href="#" data-target="home-section" class="nav-link sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-[15px]"><i class="fa-solid fa-house w-5"></i> Home</a>
+                <a href="#" data-target="data-section" class="nav-link sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-[15px]"><i class="fa-solid fa-chart-simple w-5"></i> Data Analysis</a>
+                <a href="#" data-target="model-section" class="nav-link sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-[15px]"><i class="fa-solid fa-scale-balanced w-5"></i> Model Comparison</a>
+                <a href="#" data-target="predict-section" class="nav-link sidebar-active flex items-center gap-3 px-4 py-3 text-[15px]"><i class="fa-solid fa-house-chimney-window w-5 text-[#4A3E9F]"></i> Price Prediction</a>
+                <a href="#" data-target="features-section" class="nav-link sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-[15px]"><i class="fa-solid fa-star w-5"></i> Feature Importance</a>
+                <a href="#" data-target="insights-section" class="nav-link sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-[15px]"><i class="fa-solid fa-chart-line w-5"></i> Prediction Insights</a>
+                <a href="#" data-target="about-section" class="nav-link sidebar-link flex items-center gap-3 px-4 py-3 rounded-xl text-[15px]"><i class="fa-solid fa-circle-info w-5"></i> About Project</a>
+            </nav>
+        </div>
+
+        <!-- Quick Tip -->
+        <div class="mt-auto p-4 mb-4 mx-4">
+            <div class="bg-white/10 rounded-xl p-4 border border-white/20">
+                <div class="flex items-center gap-2 font-semibold text-sm mb-2 text-yellow-300">
+                    <i class="fa-solid fa-lightbulb"></i> Quick Tip
+                </div>
+                <p class="text-xs text-blue-100 leading-relaxed">Enter the house details carefully to get an accurate price prediction.</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 overflow-y-auto h-full p-8 lg:p-10 relative">
+        <!-- Top Right Actions -->
+        <div class="absolute top-8 right-10 flex gap-4">
+            <button class="bg-[#D946EF] hover:bg-[#C026D3] text-white px-4 py-2 rounded-full text-sm font-semibold shadow-md transition-colors flex items-center gap-2">
+                <i class="fa-solid fa-rocket"></i> Deploy
+            </button>
+            <div class="w-10 h-10 rounded-full bg-indigo-600 text-white flex items-center justify-center shadow-md cursor-pointer">
+                <i class="fa-solid fa-user"></i>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="flex items-center gap-6 mb-10">
+            <div class="text-5xl">🏡</div>
+            <div>
+                <h2 class="text-3xl font-extrabold text-[#1E1B4B]">House Price Prediction</h2>
+                <p class="text-gray-500 mt-1 font-medium">Predict the sale price of residential properties using Machine Learning.</p>
+            </div>
+        </div>
+
+        <!-- SECTIONS CONTAINER -->
+        <div id="content-sections">
+            <!-- 1. Home Section -->
+            <section id="home-section" class="page-section hidden animate-fade">
+                <div class="input-card bg-white p-10 text-center">
+                    <h2 class="text-3xl font-bold text-[#1E1B4B] mb-4">Welcome to House Price Prediction</h2>
+                    <p class="text-gray-600 mb-8 max-w-2xl mx-auto">This machine learning application predicts the sale price of residential properties in Ames, Iowa based on 79 explanatory variables.</p>
+                    <button onclick="document.querySelector('[data-target=\'predict-section\']').click()" class="btn-gradient text-white px-8 py-3 rounded-xl font-bold">Start Predicting Now</button>
+                </div>
+            </section>
+            
+            <!-- 2. Data Analysis Section -->
+            <section id="data-section" class="page-section hidden animate-fade">
+                <div class="input-card bg-white p-8">
+                    <h3 class="text-xl font-bold text-[#1E1B4B] mb-4 border-b pb-2">Data Analysis</h3>
+                    <p class="text-gray-600">The Ames Housing dataset contains 1,460 rows and 80 columns. Extensive Exploratory Data Analysis (EDA) was performed to handle missing values, encode categorical variables, and remove outliers.</p>
+                </div>
+            </section>
+
+            <!-- 3. Model Comparison Section -->
+            <section id="model-section" class="page-section hidden animate-fade">
+                <div class="input-card bg-white p-8">
+                    <h3 class="text-xl font-bold text-[#1E1B4B] mb-4 border-b pb-2">Model Comparison</h3>
+                    <p class="text-gray-600 mb-4">We evaluated multiple regression models to find the best fit for the housing data.</p>
+                    <table class="w-full text-left border-collapse">
+                        <tr class="bg-gray-50"><th class="p-3 border">Model</th><th class="p-3 border">R² Score</th><th class="p-3 border">RMSE</th></tr>
+                        <tr><td class="p-3 border">Linear Regression</td><td class="p-3 border">0.82</td><td class="p-3 border">$35,000</td></tr>
+                        <tr class="bg-indigo-50"><td class="p-3 border font-bold">Random Forest (Selected)</td><td class="p-3 border font-bold">0.89</td><td class="p-3 border font-bold">$29,177</td></tr>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 4. Price Prediction Section (The Main Form) -->
+            <section id="predict-section" class="page-section animate-fade">
+                <!-- FORM CARD -->
+                <div class="input-card bg-white p-6 mb-8">
+            <div class="flex items-center gap-2 text-lg font-bold text-[#312E81] mb-6 pb-4 border-b border-gray-100">
+                📋 Enter House Details
+            </div>
+            
+            <form id="prediction-form" class="space-y-6">
+                <!-- Top Row (4 cols) -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-[#4338CA] mb-2"><i class="fa-solid fa-star text-yellow-400 mr-1"></i> 1. Overall Quality</label>
+                        <select id="overall_qual" class="custom-input bg-gray-50 text-gray-700">
+                            <option value="1">1 - Very Poor</option>
+                            <option value="2">2 - Poor</option>
+                            <option value="3">3 - Fair</option>
+                            <option value="4">4 - Below Average</option>
+                            <option value="5">5 - Average</option>
+                            <option value="6" selected>6 - Above Average</option>
+                            <option value="7">7 - Good</option>
+                            <option value="8">8 - Very Good</option>
+                            <option value="9">9 - Excellent</option>
+                            <option value="10">10 - Very Excellent</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-[#4338CA] mb-2"><i class="fa-solid fa-ruler-combined text-blue-400 mr-1"></i> 2. Living Area (sq ft)</label>
+                        <input type="number" id="gr_liv_area" class="custom-input" value="1710" min="300" max="6000">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-[#4338CA] mb-2"><i class="fa-solid fa-tree text-green-500 mr-1"></i> 3. Lot Area (sq ft)</label>
+                        <input type="number" id="lot_area" class="custom-input" value="8450" min="1300" max="200000">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-[#4338CA] mb-2"><i class="fa-solid fa-bed text-indigo-400 mr-1"></i> 4. Bedrooms</label>
+                        <input type="number" id="bedrooms" class="custom-input" value="3" min="0" max="10">
+                    </div>
+                </div>
+
+                <!-- Bottom Row (3 cols) -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div>
+                        <label class="block text-sm font-semibold text-[#4338CA] mb-2"><i class="fa-solid fa-bath text-cyan-400 mr-1"></i> 5. Bathrooms</label>
+                        <input type="number" id="full_bath" class="custom-input" value="2" min="0" max="6">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-[#4338CA] mb-2"><i class="fa-solid fa-calendar text-orange-400 mr-1"></i> 6. Year Built</label>
+                        <input type="number" id="year_built" class="custom-input" value="2003" min="1870" max="2026">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-[#4338CA] mb-2"><i class="fa-solid fa-car text-red-400 mr-1"></i> 7. Garage Cars</label>
+                        <input type="number" id="garage_cars" class="custom-input" value="2" min="0" max="5">
+                    </div>
+                </div>
+
+                <!-- Button -->
+                <div class="flex justify-center pt-2">
+                    <button type="submit" id="predict-btn" class="btn-gradient text-white px-10 py-3.5 rounded-xl font-bold text-lg w-full md:w-auto min-w-[300px]">
+                        <i class="fa-solid fa-magnifying-glass mr-2"></i> Predict House Price
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- RESULTS SECTION (Hidden initially) -->
+        <div id="result-container" class="hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
+                <!-- Price Output -->
+                <div class="input-card bg-white p-6 lg:col-span-2 flex items-center justify-between animate-fade">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-2">
+                            <h3 class="text-xl font-bold text-[#1E1B4B]">Predicted House Price</h3>
+                            <div class="bg-green-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs"><i class="fa-solid fa-check"></i></div>
+                        </div>
+                        <p class="text-sm text-gray-500 mb-4">The estimated sale price of this property is</p>
+                        
+                        <div id="price-display" class="text-5xl font-extrabold text-[#22C55E] mb-6 tracking-tight">$0</div>
+                        
+                        <div class="bg-[#F0FDF4] border border-[#BBF7D0] rounded-xl px-5 py-3 inline-block">
+                            <div class="text-xs font-bold text-green-600 mb-1 flex items-center gap-1">
+                                <i class="fa-solid fa-tag"></i> Estimated Price Range
+                            </div>
+                            <div id="price-range" class="font-extrabold text-green-800 text-lg">$0 - $0</div>
+                        </div>
+                    </div>
+                    
+                    <!-- House Illustration -->
+                    <div class="hidden md:flex flex-1 justify-center items-center opacity-90 text-[180px]">
+                        🏘️
+                    </div>
+                </div>
+
+                <!-- Metrics Summary -->
+                <div class="input-card bg-white p-6 animate-fade" style="animation-delay: 0.1s;">
+                    <div class="flex items-center gap-2 text-lg font-bold text-[#312E81] mb-5">
+                        <i class="fa-solid fa-chart-column text-blue-500"></i> Prediction Summary
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                            <span class="text-sm font-semibold text-gray-600">Model Used</span>
+                            <span class="text-sm font-bold text-[#1E1B4B]">Random Forest</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                            <span class="text-sm font-semibold text-gray-600">R² Score</span>
+                            <span id="metric-r2" class="text-sm font-bold text-[#1E1B4B]">0.89</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                            <span class="text-sm font-semibold text-gray-600">MAE</span>
+                            <span id="metric-mae" class="text-sm font-bold text-[#1E1B4B]">$17,553</span>
+                        </div>
+                        <div class="flex justify-between items-center pb-3 border-b border-gray-100">
+                            <span class="text-sm font-semibold text-gray-600">RMSE</span>
+                            <span id="metric-rmse" class="text-sm font-bold text-[#1E1B4B]">$29,177</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm font-semibold text-gray-600">Confidence</span>
+                            <span class="text-sm font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full">High (88%)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Insight -->
+            <div class="input-card bg-[#F8FAFC] border border-[#E2E8F0] p-5 flex flex-col md:flex-row items-center justify-between gap-4 animate-fade" style="animation-delay: 0.2s;">
+                <div class="flex items-center gap-4">
+                    <div class="bg-indigo-600 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl shadow-md shrink-0">
+                        <i class="fa-regular fa-lightbulb"></i>
+                    </div>
+                    <div>
+                        <h4 class="font-bold text-[#1E1B4B] mb-1">AI Insight</h4>
+                        <p class="text-sm font-medium text-gray-600">Overall Quality, Living Area, and Lot Area are the top factors affecting the house price.</p>
+                    </div>
+                </div>
+                <button class="shrink-0 text-indigo-600 border border-indigo-200 bg-white hover:bg-indigo-50 font-bold px-4 py-2 rounded-lg text-sm transition-colors shadow-sm">
+                    View Feature Importance &rarr;
+                </button>
+            </div>
+        </section> <!-- End Predict Section -->
+
+        <!-- 5. Feature Importance Section -->
+        <section id="features-section" class="page-section hidden animate-fade">
+            <div class="input-card bg-white p-8">
+                <h3 class="text-xl font-bold text-[#1E1B4B] mb-4 border-b pb-2">Feature Importance</h3>
+                <p class="text-gray-600 mb-4">The Random Forest model identified the following features as having the highest impact on house prices:</p>
+                <ol class="list-decimal pl-5 text-gray-700 space-y-2">
+                    <li><strong>Overall Quality:</strong> The material and finish of the house.</li>
+                    <li><strong>Above Grade Living Area:</strong> Total square footage of living area above ground.</li>
+                    <li><strong>Total Basement Area:</strong> Total square feet of basement area.</li>
+                    <li><strong>Garage Cars:</strong> Size of garage in car capacity.</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- 6. Prediction Insights Section -->
+        <section id="insights-section" class="page-section hidden animate-fade">
+            <div class="input-card bg-white p-8">
+                <h3 class="text-xl font-bold text-[#1E1B4B] mb-4 border-b pb-2">Prediction Insights</h3>
+                <p class="text-gray-600">The model has a high confidence rate (88% R²) for standard residential homes. However, predictions for luxury estates or highly irregular properties may have a larger margin of error due to limited training data in those ranges.</p>
+            </div>
+        </section>
+
+        <!-- 7. About Project Section -->
+        <section id="about-section" class="page-section hidden animate-fade">
+            <div class="input-card bg-white p-8">
+                <h3 class="text-xl font-bold text-[#1E1B4B] mb-4 border-b pb-2">About This Project</h3>
+                <p class="text-gray-600">Built using Scikit-Learn, Flask, and Tailwind CSS. This project serves as an end-to-end demonstration of a Machine Learning pipeline, from data preprocessing to model deployment.</p>
+            </div>
+        </section>
+
+        </div> <!-- End Content Sections -->
+        
+        <!-- Loading state -->
+        <div id="loading" class="hidden justify-center items-center py-12">
+            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+        </div>
+        
+    </main>
+
+    <script>
+        // Navigation Logic
+        const navLinks = document.querySelectorAll('.nav-link');
+        const sections = document.querySelectorAll('.page-section');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                // 1. Remove active state from all links
+                navLinks.forEach(l => {
+                    l.classList.remove('sidebar-active');
+                    l.classList.add('sidebar-link');
+                    // Reset icon color
+                    const icon = l.querySelector('i');
+                    icon.classList.remove('text-[#4A3E9F]');
+                });
+
+                // 2. Add active state to clicked link
+                link.classList.remove('sidebar-link');
+                link.classList.add('sidebar-active');
+                link.querySelector('i').classList.add('text-[#4A3E9F]');
+
+                // 3. Hide all sections
+                sections.forEach(sec => sec.classList.add('hidden'));
+
+                // 4. Show target section
+                const targetId = link.getAttribute('data-target');
+                document.getElementById(targetId).classList.remove('hidden');
+            });
+        });
+
+        // Prediction Form Logic
+        document.getElementById('prediction-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // UI States
+            const resultContainer = document.getElementById('result-container');
+            const loading = document.getElementById('loading');
+            const btn = document.getElementById('predict-btn');
+            
+            resultContainer.classList.add('hidden');
+            loading.classList.remove('hidden');
+            btn.classList.add('opacity-70', 'cursor-not-allowed');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Calculating...';
+            
+            // Gather Data
+            const data = {
+                OverallQual: parseInt(document.getElementById('overall_qual').value),
+                GrLivArea: parseInt(document.getElementById('gr_liv_area').value),
+                LotArea: parseInt(document.getElementById('lot_area').value),
+                BedroomAbvGr: parseInt(document.getElementById('bedrooms').value),
+                FullBath: parseInt(document.getElementById('full_bath').value),
+                YearBuilt: parseInt(document.getElementById('year_built').value),
+                GarageCars: parseInt(document.getElementById('garage_cars').value)
+            };
+
+            try {
+                // Call API
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.error) {
+                    alert(result.error);
+                } else {
+                    // Update DOM
+                    document.getElementById('price-display').innerText = result.formatted_price;
+                    document.getElementById('price-range').innerText = result.price_range;
+                    
+                    document.getElementById('metric-r2').innerText = result.metrics.r2;
+                    document.getElementById('metric-mae').innerText = result.metrics.mae;
+                    document.getElementById('metric-rmse').innerText = result.metrics.rmse;
+                    
+                    // Show result
+                    loading.classList.add('hidden');
+                    resultContainer.classList.remove('hidden');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred during prediction.');
+                loading.classList.add('hidden');
+            } finally {
+                btn.classList.remove('opacity-70', 'cursor-not-allowed');
+                btn.innerHTML = '<i class="fa-solid fa-magnifying-glass mr-2"></i> Predict House Price';
+            }
+        });
+    </script>
+</body>
+</html>
