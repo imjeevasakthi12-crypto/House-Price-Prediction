@@ -2,7 +2,10 @@
 
 A complete, end-to-end Machine Learning web application built with Scikit-Learn and Streamlit to predict the sale price of residential properties using the Ames Housing Dataset.
 
-## 🔗 Application URL
+## 🔗 Application URLs
+**Live Deployment URL:** [https://2deff257a7635c.lhr.life](https://2deff257a7635c.lhr.life)
+*(Publicly accessible as long as the host tunnel is active)*
+
 **Local App URL:** [http://localhost:8501](http://localhost:8501)
 
 *(Note: The server must be running for this link to work. See instructions below).*
