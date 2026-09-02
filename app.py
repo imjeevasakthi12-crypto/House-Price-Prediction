@@ -83,8 +83,10 @@ if __name__ == '__main__':
     print("\nLocal URL: http://localhost:8501\n")
     print("="*60 + "\n")
     
-    # Automatically open the web browser after a short delay
-    threading.Timer(1.5, lambda: webbrowser.open('http://localhost:8501')).start()
+    port = int(os.environ.get("PORT", 8501))
+    
+    # Automatically open the web browser after a short delay (only works locally)
+    threading.Timer(1.5, lambda: webbrowser.open(f'http://localhost:{port}')).start()
     
     # Start the Flask server
-    app.run(host='0.0.0.0', port=8501, debug=False)
+    app.run(host='0.0.0.0', port=port, debug=False)
